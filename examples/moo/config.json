@@ -3,7 +3,7 @@
     "random_seed"     : 1,
     "main_file"       : "branin_con",
     "grid_size"       : 1000,
-    "max_finished_jobs"       : 50,
+    "max_finished_jobs"       : 25,
     "experiment-name" : "branin_mulitobjective",
     "moo_use_grid_only_to_solve_problem" : true,
     "moo_grid_size_to_solve_problem" : 1000,
@@ -12,6 +12,10 @@
     "acquisition"     : "PESM",
     "pesm_pareto_set_size"      : 50,
     "pesm_not_constrain_predictions"     : false,
+    "mcmc_iters"      : 1,
+    "apply_distance"  :true,
+    "use_distance_from_iteration": 5,
+    "threshold"       : 0.3, 
     "variables": {
         "X": {
             "type": "FLOAT",
@@ -33,6 +37,11 @@
 	  "group"    : 0
       },
       "branin_2" : {
+          "type"        : "OBJECTIVE",
+	  "fit_mean"    : false,
+	  "group"    : 0
+      },
+      "branin_3" : {
           "type"        : "OBJECTIVE",
 	  "fit_mean"    : false,
 	  "group"    : 0

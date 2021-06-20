@@ -1,0 +1,56 @@
+{
+    "tasks": {
+        "michalewicz_100": {
+            "group": 0, 
+            "fit_mean": false, 
+            "type": "OBJECTIVE"
+        }, 
+        "michalewicz_75": {
+            "group": 0, 
+            "fit_mean": false, 
+            "type": "OBJECTIVE"
+        }, 
+        "beale": {
+            "group": 0, 
+            "fit_mean": false, 
+            "type": "OBJECTIVE"
+        }, 
+        "stybilinski": {
+            "group": 0, 
+            "fit_mean": false, 
+            "type": "OBJECTIVE"
+        }
+    }, 
+    "random_seed": 1, 
+    "grid_size": 1000, 
+    "language": "PYTHON", 
+    "likelihood": "GAUSSIAN", 
+    "main_file": "many2", 
+    "variables": {
+        "Y": {
+            "max": 1, 
+            "min": -1, 
+            "type": "FLOAT", 
+            "size": 1
+        }, 
+        "X": {
+            "max": 1, 
+            "min": -1, 
+            "type": "FLOAT", 
+            "size": 1
+        }
+    }, 
+    "max_finished_jobs": 30, 
+    "pesm_not_constrain_predictions": false, 
+    "moo_use_grid_only_to_solve_problem": true, 
+    "moo_grid_size_to_solve_problem": 1000, 
+    "apply_distance": true, 
+    "mcmc_iters": 1, 
+    "use_distance_from_iteration": 20, 
+    "threshold": 0.1, 
+    "pesm_use_grid_only_to_solve_problem": true, 
+    "pesm_pareto_set_size": 50, 
+    "apply__distance": true, 
+    "experiment-name": "branin-1-20", 
+    "acquisition": "PESM"
+}

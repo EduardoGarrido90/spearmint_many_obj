@@ -3,7 +3,8 @@
     "main_file"         : "toy",
     "experiment-name"   : "PESC-toy-problem",
     "acquisition"       : "PES",
-    "max_finished_jobs" : 2,
+    "max_finished_jobs" : 15,
+    "apply_distance"    : true,
     "variables" : {
         "x" : {
             "type" : "FLOAT",

@@ -221,7 +221,8 @@ logging.basicConfig(level=logLevel,
 
 DEFAULT_MAX_ITERATIONS = 200
 
-def main():
+#def main():
+def main(directory = None):
 
     parser = optparse.OptionParser(usage="usage: %prog [options] directory")
 
@@ -237,7 +238,10 @@ def main():
     (commandline_kwargs, args) = parser.parse_args()
 
     # Read in the config file
-    expt_dir  = os.path.realpath(args[0])
+    if len(args) > 0:
+        expt_dir  = os.path.realpath(args[0])
+    else:    
+        expt_dir  = os.path.realpath(directory) 
     if not os.path.isdir(expt_dir):
         raise Exception("Cannot find directory %s" % expt_dir)
 
@@ -342,8 +346,20 @@ def main():
                 # "Fit" the chooser - give the chooser data and let it fit the model(s).
                 # NOTE: even if we are only suggesting for 1 task, we need to fit all of them
                 # because the acquisition function for one task depends on all the tasks
-
-                hypers = chooser.fit(tasks, hypers)
+                hypers, redundant_process = chooser.fit(tasks, hypers, ret_redundant = options["apply_distance"])
+                 
+                # Remove redundant task from later iterations
+                # To do so, we need to delete the task from the "options" structure, since tasks
+                # are loaded  from "options" in each iteration.
+                # Delete redundant task from resource.tasks list and from the chooser objectives and models
+                if redundant_process is not None:
+                    logging.info("\n\nDeleting redundant objective " + redundant_process + "\n\n")
+                    resource.tasks.remove(redundant_process)
+                    del options["tasks"][redundant_process]
+                    # this could be done inside chooser.fit, doing it here to keep together all
+                    # the "objective removal" stuff
+                    del chooser.objectives[redundant_process]                   
+                    del chooser.models[redundant_process]
 
                 if hypers:
                     logging.debug('GP covariance hyperparameters:')
@@ -437,7 +453,7 @@ def main():
             jobs = load_jobs(db, experiment_name)
             tasks = parse_tasks_from_jobs(jobs, experiment_name, options, input_space)
             hypers = db.load(experiment_name, 'hypers')
-            hypers = chooser.fit(tasks, hypers)
+            hypers, redundant_processes = chooser.fit(tasks, hypers)
             if hypers:
                 db.save(hypers, experiment_name, 'hypers')
             # logging.info('\n**All resources have run the maximum number of jobs.**\nFinal recommendation:')

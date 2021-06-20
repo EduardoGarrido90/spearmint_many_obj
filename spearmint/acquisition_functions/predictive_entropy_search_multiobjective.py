@@ -483,7 +483,7 @@ def ep(obj_models, pareto_set, minimize=True):
             change = max(change, np.max(np.abs(a['m'][t] - aOld['m'][t])))
             change = max(change, np.max(np.abs(a['V'][t] - aOld['V'][t])))
 
-	print '%d:\t change=%f \t damping: %f' % (iteration, change, damping)
+	#print '%d:\t change=%f \t damping: %f' % (iteration, change, damping)
 
         if change < 1e-3 and iteration > 2:
             convergence = True

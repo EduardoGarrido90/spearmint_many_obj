@@ -355,21 +355,22 @@ class MOOP(base):
 			for j in range(inputs_models[ key ].shape[ 0 ]):
 #				if inputs_models[ key ][ j, : ] in inputs[ i, : ]:
 				if np.max(cdist(inputs_models[ key ][ j : (j + 1), : ], inputs[ i : (i + 1), : ])) == 0:
-					if values_tmp == None:
+                                    if values_tmp is None:
 						values_tmp = np.array(values_models[ key ][ j ])
-					else:
+				    else:
 						values_tmp = np.append(values_tmp , values_models[ key ][ j ])
 
-			if values_to_add == None:
+			if values_to_add is None:
 				values_to_add = np.array([np.mean(values_tmp)])
 			else:
 				values_to_add = np.append(values_to_add, np.mean(values_tmp))
-
-		if values_final == None:
+		if values_final is None:
 			values_final = values_to_add.reshape((1 , len(values_to_add)))
 		else:
-			values_final = np.vstack((values_final, values_to_add.reshape((1 , len(values_to_add)))))
+                        values_final = np.vstack((values_final, values_to_add.reshape((1 , len(values_to_add)))))
 
+
+            
 	# Now we only obtain the non-dominated points
 
 	pareto_indices = self._cull_algorithm(values_final)

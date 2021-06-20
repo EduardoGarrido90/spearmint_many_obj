@@ -182,6 +182,7 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
+import spearmint.utils.distances as d
 
 import numpy          as np
 import numpy.random   as npr
@@ -223,7 +224,10 @@ CHOOSER_OPTION_DEFAULTS  = {
     'regenerate_grid': True,  # whether to pick a new sobol grid every time.. grid_seed is ignored if this is True
     'moo_const_C_value' : 0, # C value to add to zero when checking that a constraint is larger than 0
     'use_sobol_grid_for_mo_optimization' : True, # whether to use a sobol or uniform grid.
-    'seed_for_uniform_grid' : 1 # If sobol is not used, select the seed for the grid.
+    'seed_for_uniform_grid' : 1, # If sobol is not used, select the seed for the grid.
+    'threshold'      : 0.1,
+    'use_distance_from_iteration' : 15
+    
     }
 
 DEFAULT_NUMDESIGN = 1  # setting to 0 will cause an error. i humbly suggest setting it to 1
@@ -305,7 +309,8 @@ class DefaultChooser(object):
 
         # print self.tolerance
 
-    def fit(self, tasks, hypers=None):
+
+    def fit(self, tasks, hypers=None, ret_redundant = False):
 
         self.tasks = tasks
         new_hypers = dict()
@@ -358,7 +363,7 @@ class DefaultChooser(object):
         # Find the total number of samples across tasks, and do not fit if less than DEFAULT_NUMDESIGN
         self.total_inputs = reduce(lambda x,y:x+y,map(lambda t: t._inputs.shape[0], self.tasks.values()), 0)
         if self.total_inputs < DEFAULT_NUMDESIGN:
-            return hypers
+            return hypers, None
 
         for task_name, task in tasks.iteritems():
 
@@ -458,8 +463,53 @@ class DefaultChooser(object):
                         np.log(task.durations), 
                         hypers=hypers['duration hypers'].get(task_name, None))
                     # print task.durations
+        # Distance between models
+        if ret_redundant == True:
+            redundant_process = self.suggest_redundant_process()
+            return new_hypers, redundant_process
+        else: 
+            return new_hypers, None
 
-        return new_hypers
+    def suggest_redundant_process(self):
+            redundant_process = None
+            # len(...) tells us the number of finished jobs        
+            if(len(self.models[next(iter(self.models))].values) < self.options['use_distance_from_iteration']): 
+                return redundant_process #no gp is considered redundant in early iterations
+            elif(len(self.objectives) <= 2):
+                return redundant_process 
+            else:
+                # Build grid of points to predict for distance calculation
+                # number of points per dimension so that the grid resolution is 1000*ndim
+                ndim = self.input_space.num_dims
+                npoints = (1000*ndim)**(1./ndim)
+                # get the ranges for each axis/dimension
+                variables = self.input_space.variables_meta
+                limits = [[variables[var]['min'], variables[var]['max']] for var in variables]
+                ranges = [np.linspace(*lim, num=npoints) for lim in limits]
+                # change the grid given by meshgrid to the points list that models.gp accepts for .predict()
+                grid = [matrix.flatten() for matrix in np.meshgrid(*ranges)]
+                pred = np.stack(grid, axis = -1)
+                
+                distances = dict()
+                n = len(self.objectives) # Number of objectives
+                for i in range(n):
+                    name1 = self.objectives.keys()[i]
+                    model1 = self.models[name1]
+                    for j in range(i+1, n):
+                    # For each pair of objectives 
+                    #(avoiding repetitions): if you compare obj1 and obj2, dont ocmpare obj2 with obj1
+                        name2 = self.objectives.keys()[j]
+                        model2 = self.models[name2]
+                        dist = d.distance(model1, model2, pred)
+                        distances[name1, name2] = dist
+                # We return the objetive name (we will choose only one at a time) 
+                # that can be erased because of being redundant
+                logging.info(distances)
+                filtered_dict = dict(filter(lambda pair: pair[1] <= self.options['threshold'], distances.items()))
+                if filtered_dict: # if it is not empty
+                    redundant_process = filtered_dict.keys()[0][0]
+                return redundant_process
+
 
     # There are 3 things going on here
     # 1) all tasks (self.tasks)

@@ -1,0 +1,51 @@
+{
+    "language"        : "PYTHON",
+    "random_seed"     : 1,
+    "main_file"       : "parabolic",
+    "grid_size"       : 1000,
+    "max_finished_jobs"       : 30,
+    "experiment-name" : "levy_mulitobjective",
+    "moo_use_grid_only_to_solve_problem" : true,
+    "moo_grid_size_to_solve_problem" : 1000,
+    "pesm_use_grid_only_to_solve_problem" : true,
+    "likelihood"      : "GAUSSIAN",
+    "acquisition"     : "PESM",
+    "pesm_pareto_set_size"      : 50,
+    "pesm_not_constrain_predictions"     : false,
+    "mcmc_iters"      : 1,
+    "apply_distance"  :true,
+    "use_distance_from_iteration": 10,
+    "threshold"       : 0.1, 
+    "variables": {
+        "X": {
+            "type": "FLOAT",
+            "size": 1,
+            "min":  -1,
+            "max":  1
+        },
+        "Y": {
+            "type": "FLOAT",
+            "size": 1,
+            "min":  -1,
+            "max":  1
+        }
+    },
+    "tasks": {
+      "parabola6" : {
+          "type"        : "OBJECTIVE",
+	  "fit_mean"    : false,
+	  "group"    : 0
+      },
+      "parabola2" : {
+          "type"        : "OBJECTIVE",
+	  "fit_mean"    : false,
+	  "group"    : 0
+      },
+      "griewank" : {
+          "type"        : "OBJECTIVE",
+	  "fit_mean"    : false,
+	  "group"    : 0
+      }
+    }
+}
+

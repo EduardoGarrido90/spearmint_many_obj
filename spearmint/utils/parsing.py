@@ -258,6 +258,9 @@ DEFAULT_GROUP            = 0
 DEFAULT_SCALE_DURATIONS  = False
 # above: if this is True (default), then the chooser's fit() was always refit all the GPs
 # if it is True then if a task has no new data, the GP will not be re-fit (this saves time)
+DEFAULT_APPLY_DISTANCE   = False
+# above: if this is True, the chooser's fit() will check if any objective is redundant using
+# utils/distance
 
 """
 Parse the config and set defaults
@@ -390,6 +393,7 @@ def parse_config_file(config_file_dir, config_file_name, verbose=True):
 
     options['always_sample'] = options.get('always_sample', DEFAULT_ALWAYS_SAMPLE)
 
+    options['apply_distance'] = options.get('apply_distance', DEFAULT_APPLY_DISTANCE)
     # Set sensible defaults for options
     options['chooser']  = options.get('chooser', DEFAULT_CHOOSER)
 

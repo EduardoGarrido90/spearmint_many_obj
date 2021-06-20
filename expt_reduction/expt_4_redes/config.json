@@ -1,0 +1,51 @@
+{
+    "language"        : "PYTHON",
+    "delta" :           0.05,
+    "random_seed"     : 1,
+    "grid_size"       : 1000,
+    "max_finished_jobs"       : 40,
+    "experiment-name" : "many_networks",
+    "likelihood"      : "GAUSSIAN",
+    "acquisition"     : "PESM",
+    "mcmc_iters"      : 1,
+    "apply_distance"  : true,
+    "use_distance_from_iteration": 20, 
+    "threshold": 0.05, 
+    "pesm_pareto_set_size"      : 50,
+    "pesm_not_constrain_predictions"     : false,
+    "main_file"       : "wrapper",
+    "use_sobol_grid_for_mo_optimization": false,
+    "seed_for_uniform_grid": 1,
+    "variables": {
+        "num_hidden_units" : {
+            "type" : "FLOAT",
+            "size" : 1,
+            "min"  : 3,
+            "max"  : 300
+        },
+        "num_hidden_layers": {
+            "type" : "FLOAT",
+            "size" : 1,
+            "min" : 3,
+            "max" : 100
+        }
+    },
+    "tasks": {
+      "o1_error" : {
+          "type"        : "OBJECTIVE",
+          "fit_mean"    : false,
+          "group"    : 0
+      },
+      "o2_time" : {
+          "type"        : "OBJECTIVE",
+          "fit_mean"    : false,
+          "group"    : 0
+      },
+      "o3_size" : {
+        "type" : "OBJECTIVE",
+        "fit_mean" : false,
+        "group"  : 0
+      }
+    }
+}
+
